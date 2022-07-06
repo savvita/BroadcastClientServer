@@ -1,0 +1,96 @@
+﻿<Window x:Class="Client.View.ChatView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:local="clr-namespace:Client.View"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="ChatView" Height="450" Width="800"
+        Background="#FF607D8B"
+        WindowStartupLocation="CenterScreen">
+    
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding CloseCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Window.Resources>
+        <ResourceDictionary Source="StyleDictionary.xaml" />
+    </Window.Resources>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" LastChildFill="True">
+            
+            <Label 
+                DockPanel.Dock="Left" 
+                Style="{StaticResource LabelStyle}"
+                Content="Name" />
+
+            <Button 
+                DockPanel.Dock="Right" 
+                Style="{StaticResource ButtonStyle}"
+                Content="Connect" Command="{Binding ConnectCommand}" 
+                IsEnabled="{Binding IsConnectPossible}" />
+
+            <TextBox 
+                DockPanel.Dock="Left"
+                Style="{StaticResource TextBoxStyle}"
+                IsEnabled="{Binding IsConnectPossible}"
+                Text="{Binding Name, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+
+        </DockPanel>
+
+        <Border Grid.Row="1" Style="{StaticResource ChatContainerStyle}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="10">
+                <TextBlock 
+                    Style="{StaticResource ChatStyle}"
+                    TextWrapping="Wrap"
+                    Text="{Binding ChatText, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+            </ScrollViewer>
+        </Border>
+
+        <DockPanel Grid.Row="2" LastChildFill="True">
+            <Button 
+                DockPanel.Dock="Right"
+                Style="{StaticResource ButtonStyle}"
+                Content="Send" 
+                Command="{Binding SendCommand}"
+                CommandParameter="{Binding ElementName=msg,Path=Text}"
+                IsEnabled="{Binding IsConnected}" >
+                <Button.Triggers>
+                    <EventTrigger RoutedEvent="Button.Click">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation 
+                                        Storyboard.TargetName="msg" 
+                                        Storyboard.TargetProperty="Opacity" 
+                                        To="0.0" 
+                                        Duration="0:0:0.1" 
+                                        FillBehavior="Stop"
+                                        Completed="DoubleAnimation_Completed"/>
+
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                </Button.Triggers>
+            </Button>
+
+            <TextBox 
+                DockPanel.Dock="Left"
+                Style="{StaticResource TextBoxStyle}"
+                Name="msg" />
+            
+        </DockPanel>
+    </Grid>
+</Window>
